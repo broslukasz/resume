@@ -67,8 +67,8 @@ gltfLoader.load(
       const bakedMesh = gltf.scene.children.find(child => child.name === 'baked');
       const poleLight = gltf.scene.children.find(child => child.name === 'poleLight');
 
-      poleLight.material = poleLightMaterial;
       bakedMesh.material = bakedMaterial;
+      poleLight.material = poleLightMaterial;
       scene.add(gltf.scene)
   }
 )

@@ -6,6 +6,21 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 /**
+ * Arrows
+ */
+const leftArrow = document.querySelector('#left-arrow');
+const rightArrow = document.querySelector('#right-arrow');
+
+leftArrow.addEventListener('click', () => {
+  camera.position.x -= 0.90
+})
+
+rightArrow.addEventListener('click', () => {
+  camera.position.x += 0.90
+})
+
+
+/**
  * Base
  */
 // Debug

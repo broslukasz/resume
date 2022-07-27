@@ -25,9 +25,9 @@ rightArrow.addEventListener('click', () => {
  * Base
  */
 // Debug
-// const gui = new dat.GUI({
-//     width: 400
-// })
+const gui = new dat.GUI({
+    width: 400
+})
 
 // Canvas
 const canvas = document.querySelector<HTMLCanvasElement>('canvas.webgl')
@@ -119,14 +119,19 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 4
-camera.position.y = 2
-camera.position.z = 4
+camera.position.x = 0
+camera.position.y = 2.5
+camera.position.z = 6
 scene.add(camera)
+// Camera debug
+gui.add(camera.position, 'x')
+gui.add(camera.position, 'y')
+gui.add(camera.position, 'z')
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+controls.update();
 
 /**
  * Renderer
@@ -148,8 +153,7 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
-    // Update controls
-    controls.update()
+    controls.update();
 
     // Render
     renderer.render(scene, camera)

@@ -26,8 +26,10 @@ rightArrow.addEventListener('click', () => {
  */
 // Debug
 const gui = new dat.GUI({
-    width: 400
+    width: 300
 })
+
+gui.close();
 
 // Canvas
 const canvas = document.querySelector<HTMLCanvasElement>('canvas.webgl')
@@ -124,9 +126,9 @@ camera.position.y = 2.5
 camera.position.z = 6
 scene.add(camera)
 // Camera debug
-gui.add(camera.position, 'x').min(-20).max(20).step(0.01)
-gui.add(camera.position, 'y').min(-20).max(20).step(0.01)
-gui.add(camera.position, 'z').min(-20).max(20).step(0.01)
+gui.add(camera.position, 'x').min(-20).max(20).step(0.01).name('positionX')
+gui.add(camera.position, 'y').min(-20).max(20).step(0.01).name('positionY')
+gui.add(camera.position, 'z').min(-20).max(20).step(0.01).name('positionZ')
 
 // Controls
 const controls = new OrbitControls(camera, canvas)

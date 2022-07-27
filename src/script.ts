@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { Object3D } from 'three';
 
 /**
  * Arrows
@@ -29,7 +30,7 @@ rightArrow.addEventListener('click', () => {
 // })
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector<HTMLCanvasElement>('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
@@ -78,13 +79,15 @@ const poleLightMaterial = new THREE.MeshBasicMaterial(
 
 gltfLoader.load(
   'welcome-place.glb',
-  (gltf) => {
+  (gltf: { scene: { children: any[] } }) => {
       const bakedMesh = gltf.scene.children.find(child => child.name === 'baked');
       const poleLight = gltf.scene.children.find(child => child.name === 'poleLight');
 
       bakedMesh.material = bakedMaterial;
       poleLight.material = poleLightMaterial;
-      scene.add(gltf.scene)
+      if (gltf.scene instanceof Object3D) {
+        scene.add(gltf.scene)
+      }
   }
 )
 

@@ -124,9 +124,9 @@ camera.position.y = 2.5
 camera.position.z = 6
 scene.add(camera)
 // Camera debug
-gui.add(camera.position, 'x')
-gui.add(camera.position, 'y')
-gui.add(camera.position, 'z')
+gui.add(camera.position, 'x').min(-20).max(20).step(0.01)
+gui.add(camera.position, 'y').min(-20).max(20).step(0.01)
+gui.add(camera.position, 'z').min(-20).max(20).step(0.01)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -152,8 +152,6 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
-
-    controls.update();
 
     // Render
     renderer.render(scene, camera)

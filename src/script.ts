@@ -4,21 +4,14 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
+import * as TWEEN from "@tweenjs/tween.js";
 
 /**
  * Arrows
  */
 const leftArrow = document.querySelector('#left-arrow');
 const rightArrow = document.querySelector('#right-arrow');
-
-leftArrow.addEventListener('click', () => {
-  camera.position.x -= 0.90
-})
-
-rightArrow.addEventListener('click', () => {
-  camera.position.x += 0.90
-})
 
 
 /**
@@ -61,6 +54,11 @@ const bakedTexture = textureLoader.load(
 bakedTexture.flipY = false;
 bakedTexture.encoding = THREE.sRGBEncoding;
 
+// Introduction texture
+const introductionBakedTexture = textureLoader.load(
+  'introduction-baked.jpg'
+)
+
 /**
  * Materials
  */
@@ -75,10 +73,16 @@ const poleLightMaterial = new THREE.MeshBasicMaterial(
   { color: 0xFFD32B }
 )
 
+// Intruduction Material
+const introductionMaterial = new THREE.MeshBasicMaterial({
+  map: introductionBakedTexture
+})
+
 /**
- * Model
+ * Models
  */
 
+// Welcome Model
 gltfLoader.load(
   'welcome-place.glb',
   (gltf: { scene: { children: any[] } }) => {
@@ -92,6 +96,21 @@ gltfLoader.load(
       }
   }
 )
+
+// Introduction Model
+gltfLoader.load(
+  'introduction.glb',
+  (gltf: { scene: { children: any[] } }) => {
+    const bakedMesh = gltf.scene.children.find(child => child.name === 'floor');
+
+    bakedMesh.material = introductionMaterial;
+    if (gltf.scene instanceof Object3D) {
+      gltf.scene.position.x = 9.25;
+      scene.add(gltf.scene)
+    }
+  }
+)
+
 
 /**
  * Sizes
@@ -121,9 +140,10 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 0
-camera.position.y = 2.5
-camera.position.z = 6
+const cameraInitialPosition = new Vector3(0, 2.5, 6);
+const cameraIntroductionPosition = new Vector3(9.25, 2.5, 6);
+
+camera.position.set(cameraInitialPosition.x, cameraInitialPosition.y, cameraInitialPosition.z);
 scene.add(camera)
 // Camera debug
 gui.add(camera.position, 'x').min(-20).max(20).step(0.01).name('positionX')
@@ -133,7 +153,7 @@ gui.add(camera.position, 'z').min(-20).max(20).step(0.01).name('positionZ')
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.update();
+// controls.update();
 
 /**
  * Renderer
@@ -147,6 +167,42 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.outputEncoding = THREE.sRGBEncoding;
 
 /**
+ * Actions
+ */
+
+leftArrow.addEventListener('click', () => {
+  const coords = {x: camera.position.x, y: camera.position.y, z: camera.position.z}
+
+  new TWEEN.Tween(coords)
+    .to({x: camera.position.x - cameraIntroductionPosition.x}, 300)
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .onUpdate(() => {
+      camera.position.set(coords.x, coords.y, coords.z)
+      setTimeout(() => {
+        controls.target.set(cameraInitialPosition.x, 0, 0);
+        controls.update();
+      }, 300)
+    })
+    .start()
+})
+
+rightArrow.addEventListener('click', () => {
+  const coords = {x: camera.position.x, y: camera.position.y, z: camera.position.z}
+
+  new TWEEN.Tween(coords)
+    .to({x: camera.position.x + cameraIntroductionPosition.x}, 300)
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .onUpdate(() => {
+      camera.position.set(coords.x, coords.y, coords.z)
+      setTimeout(() => {
+        controls.target.set(cameraIntroductionPosition.x, 0, 0);
+        controls.update();
+      }, 300)
+    })
+    .start()
+})
+
+/**
  * Animate
  */
 const clock = new THREE.Clock()
@@ -157,6 +213,8 @@ const tick = () =>
 
     // Render
     renderer.render(scene, camera)
+
+    TWEEN.update();
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

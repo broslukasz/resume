@@ -31,7 +31,7 @@ main {
 
 .left-arrow {
     position: fixed;
-    left: 12vw;
+    left: 8vw;
     bottom: 6vh;
     width: 0;
     height: 0;
@@ -43,7 +43,7 @@ main {
 
 .right-arrow {
     position: fixed;
-    right: 12vw;
+    right: 8vw;
     bottom: 6vh;
     width: 0;
     height: 0;
